@@ -73,11 +73,14 @@
 .*/node_modules/protobufjs/src/bower.json
 .*/node_modules/grpc/node_modules/protobufjs/src/bower.json
 
+# Ignore dist folder
+.*/dist/.*
+
 [include]
 node_modules/fbjs/lib
 
 [libs]
-lib/flow.js
+lib/types/flow.js
 node_modules/react-native/Libraries/react-native/react-native-interface.js
 node_modules/react-native/flow
 node_modules/fbjs/flow/lib
@@ -91,7 +94,7 @@ unsafe.enable_getters_and_setters=true
 esproposal.class_static_fields=enable
 esproposal.class_instance_fields=enable
 
-munge_underscores=true
+munge_underscores=false
 
 module.name_mapper='^image![a-zA-Z0-9$_-]+$' -> 'GlobalImageStub'
 module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'
@@ -105,4 +108,4 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(2[0-4]\\|1[0-9]\\|[0-9
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 
 [version]
-^0.46.0
+^0.56.0

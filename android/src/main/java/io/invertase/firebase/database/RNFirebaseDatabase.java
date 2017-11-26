@@ -13,6 +13,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.Logger;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.OnDisconnect;
 import com.google.firebase.database.ServerValue;
@@ -32,6 +33,7 @@ import io.invertase.firebase.Utils;
 
 public class RNFirebaseDatabase extends ReactContextBaseJavaModule {
   private static final String TAG = "RNFirebaseDatabase";
+  private boolean enableLogging = false;
   private HashMap<String, RNFirebaseDatabaseReference> references = new HashMap<>();
   private SparseArray<RNFirebaseTransactionHandler> transactionHandlers = new SparseArray<>();
 
@@ -68,6 +70,33 @@ public class RNFirebaseDatabase extends ReactContextBaseJavaModule {
   public void setPersistence(String appName, Boolean state) {
     getDatabaseForApp(appName).setPersistenceEnabled(state);
   }
+
+  /**
+   * @param appName
+   * @param size
+   */
+  @ReactMethod
+  public void setPersistenceCacheSizeBytes(String appName, int size) {
+    getDatabaseForApp(appName).setPersistenceCacheSizeBytes((long) size);
+  }
+
+
+  /**
+   * @param enabled
+   */
+  @ReactMethod
+  public void enableLogging(Boolean enabled) {
+    enableLogging = enabled;
+    List<FirebaseApp> firebaseAppList = FirebaseApp.getApps(getReactApplicationContext());
+    for (FirebaseApp app : firebaseAppList) {
+      if (enableLogging) {
+        FirebaseDatabase.getInstance(app).setLogLevel(Logger.Level.DEBUG);
+      } else {
+        FirebaseDatabase.getInstance(app).setLogLevel(Logger.Level.WARN);
+      }
+    }
+  }
+
 
   /**
    * @param appName
@@ -455,9 +484,18 @@ public class RNFirebaseDatabase extends ReactContextBaseJavaModule {
    * @param appName
    * @return
    */
-  static FirebaseDatabase getDatabaseForApp(String appName) {
+  private FirebaseDatabase getDatabaseForApp(String appName) {
     FirebaseApp firebaseApp = FirebaseApp.getInstance(appName);
-    return FirebaseDatabase.getInstance(firebaseApp);
+    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
+
+// todo errors  'calls must be made before any other usage of database instance
+//    if (enableLogging) {
+//      firebaseDatabase.setLogLevel(Logger.Level.DEBUG);
+//    } else {
+//      firebaseDatabase.setLogLevel(Logger.Level.WARN);
+//    }
+
+    return firebaseDatabase;
   }
 
   /**
